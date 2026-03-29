@@ -20,7 +20,8 @@ Based on the on-chain data pipeline, the analysis revealed:
 * **Total Whale Volume:** A significant accumulation of **$3,198,933.64** was executed by the top 50 largest wallets within a 7-day window.
 * **Market Dominance:** *(Insert your Matplotlib Bar Chart image here!)*
 
-<img width="1751" height="1102" alt="image" src="https://github.com/user-attachments/assets/1d038e1c-bc47-43c5-9e7c-4a7e7b8e9fa3" />
+<img width="1768" height="1102" alt="image (1)" src="https://github.com/user-attachments/assets/9d74299b-efcf-4982-8ccd-288fbd26ccf7" />
+
 
 
 ## 🚀 How to Run the Code
