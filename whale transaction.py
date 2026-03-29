@@ -1,88 +1,64 @@
-# /// script
-# requires-python = ">=3.13"
-# dependencies = [
-#     "dune-client==1.10.0",
-#     "marimo>=0.21.1",
-#     "matplotlib==3.10.8",
-#     "pandas==3.0.1",
-# ]
-# ///
+# Import necessary libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+from dune_client.client import DuneClient
 
-import marimo
+# ==========================================
+# 1. API SETUP & DATA EXTRACTION
+# ==========================================
+# Initialize the Dune client with your personal API key
+DUNE_API_KEY = "YOUR_API_KEY_HERE" 
+dune = DuneClient(DUNE_API_KEY)
 
-__generated_with = "0.21.1"
-app = marimo.App(
-    width="medium",
-    css_file="/usr/local/_marimo/custom.css",
-    auto_download=["html"],
-)
+# The specific Query ID from your Dune Analytics URL
+QUERY_ID = 1234567 
 
+print("Fetching live on-chain data from Dune Analytics...")
+# Fetch the latest execution result of the SQL query
+query_result = dune.get_latest_result(QUERY_ID)
 
-@app.cell
-def _():
-    import pandas as pd
-    from dune_client.client import DuneClient
+# Convert the fetched JSON/List data into a Pandas DataFrame for analysis
+df = pd.DataFrame(query_result.result.rows)
+print("Data successfully loaded!")
 
+# ==========================================
+# 2. DATA CLEANING & AGGREGATION
+# ==========================================
+# Data Sanitization: Drop rows where the 'whale_address' is missing (Null)
+df_clean = df.dropna(subset=['whale_address'])
 
-    # 1. API SETUP
-    DUNE_API_KEY = "iEuaSNBZeMLZcwoqQdAqWa1uVUgyQ8d3" 
-    dune = DuneClient(DUNE_API_KEY)
-    QUERY_ID = 6897733
+# Business Intelligence: Calculate the total USD volume accumulated by these whales
+total_whale_volume = df_clean['amount_usd'].sum()
 
-    # 2. PULL DATA FROM BLOCKCHAIN
-    print("⏳ Menjemput data dari server Dune...\n")
-    hasil_kueri = dune.get_latest_result(QUERY_ID)
-    df = pd.DataFrame(hasil_kueri.result.rows)
+print(f"Total LINK Whale Accumulation (7 Days): ${total_whale_volume:,.2f}")
 
+# ==========================================
+# 3. DATA VISUALIZATION
+# ==========================================
+print("Generating visualization for the Top 5 Whales...")
 
-    print("📊 CUPLIKAN TABEL DATA MENTAH:")
-    print(df.head())
-    print("-" * 50)
+# Sort the dataframe to isolate the top 5 largest transactions
+df_top_5 = df_clean.sort_values(by='amount_usd', ascending=False).head(5)
 
-    # 3. DATA CLEANING PROCESS
-    # Kita ganti kata 'taker' dengan nama kolom yang BENAR yaitu 'whale_address'
-    df_bersih = df.dropna(subset=['whale_address'])
+# Initialize the canvas size for the plot
+plt.figure(figsize=(10, 6))
 
+# Shorten wallet addresses for better readability on the X-axis (e.g., "0x1234...")
+short_addresses = df_top_5['whale_address'].str[:6] + "..." 
 
-    total_uang_whale = df_bersih['amount_usd'].sum()
+# Create a bar chart
+plt.bar(short_addresses, df_top_5['amount_usd'], color='skyblue', edgecolor='black')
 
+# Add professional titles and labels
+plt.title('Top 5 LINK Whales by Transaction Volume (Last 7 Days)', fontsize=14, fontweight='bold')
+plt.xlabel('Wallet Address', fontsize=12)
+plt.ylabel('Transaction Value (USD)', fontsize=12)
 
-    print("✅ LAPORAN MANAJER:")
-    print(f"Total uang yang diputar oleh 50 Whale koin LINK dalam 7 hari terakhir adalah: ${total_uang_whale:,.2f}")
-    return (df_bersih,)
+# Format the Y-axis to show readable comma-separated dollar amounts (e.g., 1,000,000)
+plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
 
+# Save the chart as a PNG file for the GitHub README repository
+plt.savefig('whale_chart.png', bbox_inches='tight')
 
-@app.cell
-def _(df_bersih):
-    import matplotlib.pyplot as plt
-
-    print("🎨 Sedang menggambar grafik untuk Manajer...")
-
-    # 1. Kita ambil data bersih yang tadi, lalu kita urutkan dari yang terbesar
-    # (Mengingat kembali pelajaran awal kita tentang sort_values!)
-    df_top_5 = df_bersih.sort_values(by='amount_usd', ascending=False).head(5)
-
-    # 2. Kita siapkan kanvas gambarnya
-    plt.figure(figsize=(10, 6))
-
-    # 3. Kita buat Bar Chart (Sumbu X = Alamat Dompet, Sumbu Y = Nilai Dolar)
-    # Karena alamat dompet terlalu panjang, kita persingkat 6 huruf depannya saja
-    alamat_pendek = df_top_5['whale_address'].str[:6] + "..." 
-
-    plt.bar(alamat_pendek, df_top_5['amount_usd'], color='skyblue', edgecolor='black')
-
-    # 4. Kita beri judul dan label yang rapi agar HRD terkesan
-    plt.title('Top 5 Whale Koin LINK (24 jam terakhir)', fontsize=14, fontweight='bold')
-    plt.xlabel('Alamat Dompet (Whale)', fontsize=12)
-    plt.ylabel('Nilai Transaksi (USD)', fontsize=12)
-
-    # Menambahkan format angka agar mudah dibaca (opsional tapi profesional)
-    plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, loc: "{:,}".format(int(x))))
-
-    # 5. Tampilkan grafiknya!
-    plt.show()
-    return
-
-
-if __name__ == "__main__":
-    app.run()
+# Render the chart on the screen
+plt.show()
