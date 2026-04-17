@@ -1,5 +1,4 @@
-# 🐋 LINK Token Whale Accumulation Analysis (Web3 Data Science)
-
+# 🐋 LINK Token Whale Accumulation Analysis 
 ## 📌 Project Overview
 This project aims to detect and analyze the activity of high-net-worth wallets ("Whales") accumulating Chainlink (LINK) tokens across Decentralized Exchanges (DEXs) over the past 7 days. Tracking "smart money" is crucial in the DeFi ecosystem to identify liquidity trends, market sentiment, and potential accumulation phases.
 
