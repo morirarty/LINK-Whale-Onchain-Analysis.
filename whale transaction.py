@@ -6,11 +6,11 @@ from dune_client.client import DuneClient
 # ==========================================
 # 1. API SETUP & DATA EXTRACTION
 # ==========================================
-# Initialize the Dune client with your personal API key
+# Initialize the Dune client with personal API key
 DUNE_API_KEY = "iEuaSNBZeMLZcwoqQdAqWa1uVUgyQ8d3" 
 dune = DuneClient(DUNE_API_KEY)
 
-# The specific Query ID from your Dune Analytics URL
+# The specific Query ID from Dune Analytics URL
 QUERY_ID = 6897733
 
 print("Fetching live on-chain data from Dune Analytics...")
