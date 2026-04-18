@@ -17,7 +17,7 @@ This project aims to detect and analyze the activity of high-net-worth wallets (
 ## 📊 Key Findings
 Based on the on-chain data pipeline, the analysis revealed:
 * **Total Whale Volume:** A significant accumulation of **$3,198,933.64** was executed by the top 50 largest wallets within a 7-day window.
-* **Market Dominance:** *(Insert your Matplotlib Bar Chart image here!)*
+* **Market Dominance:** 
 
 <img width="1768" height="1102" alt="image (1)" src="https://github.com/user-attachments/assets/9d74299b-efcf-4982-8ccd-288fbd26ccf7" />
 
